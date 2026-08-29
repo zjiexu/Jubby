@@ -1,0 +1,36 @@
+package com.jubby.application;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.jubby.application.JobApplicationService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/applications")
+public class JobApplicationController {
+
+  private final JobApplicationService jobApplicationService;
+
+  public JobApplicationController(JobApplicationService jobApplicationService) {
+    this.jobApplicationService = jobApplicationService;
+  }
+
+  @GetMapping
+  public List<JobApplication> getAllApplications() {
+    return jobApplicationService.findAll();
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<JobApplication> getApplicationById(@PathVariable Long id) {
+    return jobApplicationService.findById(id)
+      .map(ResponseEntity::ok)
+      .orElse(ResponseEntity.notFound().build());
+  }
+
+  @PostMapping
+  public JobApplication createApplication(@RequestBody JobApplication application) {
+    return jobApplicationService.create(application);
+  }
+}
