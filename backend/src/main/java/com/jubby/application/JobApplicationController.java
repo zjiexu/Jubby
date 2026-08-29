@@ -33,4 +33,25 @@ public class JobApplicationController {
   public JobApplication createApplication(@RequestBody JobApplication application) {
     return jobApplicationService.create(application);
   }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<JobApplication> updateApplication(
+    @PathVariable Long id,
+    @RequestBody JobApplication updatedApplication
+  ) {
+    return jobApplicationService.update(id, updatedApplication)
+      .map(ResponseEntity::ok)
+      .orElse(ResponseEntity.notFound().build());
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteApplication(@PathVariable Long id) {
+    boolean deleted = jobApplicationService.deleteById(id);
+
+    if (!deleted) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.noContent().build();
+  }
 }
