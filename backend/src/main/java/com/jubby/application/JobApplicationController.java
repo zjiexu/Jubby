@@ -32,16 +32,16 @@ public class JobApplicationController {
   }
 
   @PostMapping
-  public JobApplication createApplication(@Valid @RequestBody JobApplication application) {
-    return jobApplicationService.create(application);
+  public JobApplication createApplication(@Valid @RequestBody JobApplicationRequest request) {
+    return jobApplicationService.create(request);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<JobApplication> updateApplication(
     @PathVariable Long id,
-    @Valid @RequestBody JobApplication updatedApplication
+    @Valid @RequestBody JobApplicationRequest request
   ) {
-    return jobApplicationService.update(id, updatedApplication)
+    return jobApplicationService.update(id, request)
       .map(ResponseEntity::ok)
       .orElse(ResponseEntity.notFound().build());
   }
