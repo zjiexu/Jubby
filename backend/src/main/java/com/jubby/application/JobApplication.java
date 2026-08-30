@@ -2,16 +2,29 @@ package com.jubby.application;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.URL;
 
 public class JobApplication {
 
     private Long id;
+
+    @NotBlank(message = "Company is required")
     private String company;
+
+    @NotBlank(message = "Position is required")
     private String position;
+    
     private String location;
     private String salary;
+
+    @URL(message = "Job URL must be a valid URL")
     private String jobUrl;
+
+    @NotNull(message = "Status is required")
     private ApplicationStatus status;
+    
     private LocalDate applicationDate;
     private String notes;
     private LocalDateTime createdAt;

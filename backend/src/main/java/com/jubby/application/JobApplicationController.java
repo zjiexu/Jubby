@@ -7,6 +7,8 @@ import com.jubby.application.JobApplicationService;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/applications")
 public class JobApplicationController {
@@ -30,14 +32,14 @@ public class JobApplicationController {
   }
 
   @PostMapping
-  public JobApplication createApplication(@RequestBody JobApplication application) {
+  public JobApplication createApplication(@Valid @RequestBody JobApplication application) {
     return jobApplicationService.create(application);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<JobApplication> updateApplication(
     @PathVariable Long id,
-    @RequestBody JobApplication updatedApplication
+    @Valid @RequestBody JobApplication updatedApplication
   ) {
     return jobApplicationService.update(id, updatedApplication)
       .map(ResponseEntity::ok)
