@@ -4,147 +4,169 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.*;
 import org.hibernate.validator.constraints.URL;
 
+@Entity
+@Table(name = "job_applications")
 public class JobApplication {
 
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @NotBlank(message = "Company is required")
-    private String company;
+  @NotBlank(message = "Company is required")
+  private String company;
 
-    @NotBlank(message = "Position is required")
-    private String position;
-    
-    private String location;
-    private String salary;
+  @NotBlank(message = "Position is required")
+  private String position;
+  
+  private String location;
+  private String salary;
 
-    @URL(message = "Job URL must be a valid URL")
-    private String jobUrl;
+  @URL(message = "Job URL must be a valid URL")
+  private String jobUrl;
 
-    @NotNull(message = "Status is required")
-    private ApplicationStatus status;
-    
-    private LocalDate applicationDate;
-    private String notes;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+  @NotNull(message = "Status is required")
+  @Enumerated(EnumType.STRING)
+  private ApplicationStatus status;
+  
+  private LocalDate applicationDate;
+  private String notes;
 
-    public JobApplication() {
+  @Column(nullable = false, updatable = false)
+  private LocalDateTime createdAt;
 
-    }
+  @Column(nullable = false)
+  private LocalDateTime updatedAt;
 
-    public JobApplication(
-      Long id,
-      String company,
-      String position,
-      String location,
-      String salary,
-      String jobUrl,
-      ApplicationStatus status,
-      LocalDate applicationDate,
-      String notes,
-      LocalDateTime createdAt,
-      LocalDateTime updatedAt
-    ) {
-      this.id = id;
-      this.company = company;
-      this.position = position;
-      this.location = location;
-      this.salary = salary;
-      this.jobUrl = jobUrl;
-      this.status = status;
-      this.applicationDate = applicationDate;
-      this.notes = notes;
-      this.createdAt = createdAt;
-      this.updatedAt = updatedAt;
-    }
+  public JobApplication() {
 
-    public Long getId() {
-      return id;
-    }
+  }
 
-    public void setId(Long id) {
-      this.id = id;
-    }
+  public JobApplication(
+    Long id,
+    String company,
+    String position,
+    String location,
+    String salary,
+    String jobUrl,
+    ApplicationStatus status,
+    LocalDate applicationDate,
+    String notes,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
+  ) {
+    this.id = id;
+    this.company = company;
+    this.position = position;
+    this.location = location;
+    this.salary = salary;
+    this.jobUrl = jobUrl;
+    this.status = status;
+    this.applicationDate = applicationDate;
+    this.notes = notes;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+  }
 
-    public String getCompany() {
-      return company;
-    }
+  @PrePersist
+  public void onCreate() {
+    LocalDateTime now = LocalDateTime.now();
+    this.createdAt = now;
+    this.updatedAt = now;
+  }
 
-    public void setCompany(String company) {
-      this.company = company;
-    }
+  @PreUpdate
+  public void onUpdate() {
+    this.updatedAt = LocalDateTime.now();
+  }
 
-    public String getPosition() {
-      return position;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setPosition(String position) {
-      this.position = position;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public String getLocation() {
-      return location;
-    }
+  public String getCompany() {
+    return company;
+  }
 
-    public void setLocation(String location) {
-      this.location = location;
-    }
+  public void setCompany(String company) {
+    this.company = company;
+  }
 
-    public String getSalary() {
-      return salary;
-    }
+  public String getPosition() {
+    return position;
+  }
 
-    public void setSalary(String salary) {
-      this.salary = salary;
-    }
+  public void setPosition(String position) {
+    this.position = position;
+  }
 
-    public String getJobUrl() {
-      return jobUrl;
-    }
+  public String getLocation() {
+    return location;
+  }
 
-    public void setJobUrl(String jobUrl) {
-      this.jobUrl = jobUrl;
-    }
+  public void setLocation(String location) {
+    this.location = location;
+  }
 
-    public ApplicationStatus getStatus() {
-      return status;
-    }
+  public String getSalary() {
+    return salary;
+  }
 
-    public void setStatus(ApplicationStatus status) {
-      this.status = status;
-    }
+  public void setSalary(String salary) {
+    this.salary = salary;
+  }
 
-    public LocalDate getApplicationDate() {
-      return applicationDate;
-    }
+  public String getJobUrl() {
+    return jobUrl;
+  }
 
-    public void setApplicatonDate(LocalDate applicationDate) {
-      this.applicationDate = applicationDate;
-    }
+  public void setJobUrl(String jobUrl) {
+    this.jobUrl = jobUrl;
+  }
 
-    public String getNotes() {
-      return notes;
-    }
+  public ApplicationStatus getStatus() {
+    return status;
+  }
 
-    public void setNotes(String notes) {
-      this.notes = notes;
-    }
+  public void setStatus(ApplicationStatus status) {
+    this.status = status;
+  }
 
-    public LocalDateTime getCreatedAt() {
-      return createdAt;
-    }
+  public LocalDate getApplicationDate() {
+    return applicationDate;
+  }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-      this.createdAt = createdAt;
-    }
+  public void setApplicatonDate(LocalDate applicationDate) {
+    this.applicationDate = applicationDate;
+  }
 
-    public LocalDateTime getUpdatedAt() {
-      return updatedAt;
-    }
+  public String getNotes() {
+    return notes;
+  }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-      this.updatedAt = updatedAt;
-    }
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
+
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public LocalDateTime getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(LocalDateTime updatedAt) {
+    this.updatedAt = updatedAt;
+  }
 }

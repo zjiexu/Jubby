@@ -2,46 +2,36 @@ package com.jubby.application;
 
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class JobApplicationService {
 
-  private final List<JobApplication> applications = new ArrayList<>();
-  private final AtomicLong nextId = new AtomicLong(1);
+  private final JobApplicationRepository jobApplicationRepository;
+
+  public JobApplicationService(JobApplicationRepository jobApplicationRepository) {
+    this.jobApplicationRepository = jobApplicationRepository;
+  }
 
   public List<JobApplication> findAll() {
-    return applications;
+    return jobApplicationRepository.findAll();
   }
 
   public Optional<JobApplication> findById(Long id) {
-    return applications.stream()
-      .filter(application -> application.getId().equals(id))
-      .findFirst();
+    return jobApplicationRepository.findById(id);
   }
 
   public JobApplication create(JobApplication application) {
-    LocalDateTime now = LocalDateTime.now();
-
-    application.setId(nextId.getAndIncrement());
-    application.setCreatedAt(now);
-    application.setUpdatedAt(now);
-
     if (application.getStatus() == null) {
       application.setStatus(ApplicationStatus.SAVED);
     }
 
-    applications.add(application);
-    return application;
+    return jobApplicationRepository.save(application);
   }
 
   public Optional<JobApplication> update(Long id, JobApplication updatedApplication) {
-    return findById(id).map(existingApplication -> {
+    return jobApplicationRepository.findById(id).map(existingApplication -> {
       existingApplication.setCompany(updatedApplication.getCompany());
       existingApplication.setPosition(updatedApplication.getPosition());
       existingApplication.setLocation(updatedApplication.getLocation());
@@ -50,13 +40,17 @@ public class JobApplicationService {
       existingApplication.setStatus(updatedApplication.getStatus());
       existingApplication.setApplicatonDate(updatedApplication.getApplicationDate());
       existingApplication.setNotes(updatedApplication.getNotes());
-      existingApplication.setUpdatedAt(LocalDateTime.now());
 
-      return existingApplication;
+      return jobApplicationRepository.save(existingApplication);
     });
   }
 
   public boolean deleteById(Long id) {
-    return applications.removeIf(application -> application.getId().equals(id));
+    if (!jobApplicationRepository.existsById(id)) {
+      return false;
+    }
+
+    jobApplicationRepository.deleteById(id);
+    return true;
   }
 }
