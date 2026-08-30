@@ -20,28 +20,34 @@ public class JobApplicationController {
   }
 
   @GetMapping
-  public List<JobApplication> getAllApplications() {
-    return jobApplicationService.findAll();
+  public List<JobApplicationResponse> getAllApplications() {
+    return jobApplicationService.findAll()
+      .stream()
+      .map(JobApplicationResponse::from)
+      .toList();
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<JobApplication> getApplicationById(@PathVariable Long id) {
+  public ResponseEntity<JobApplicationResponse> getApplicationById(@PathVariable Long id) {
     return jobApplicationService.findById(id)
+      .map(JobApplicationResponse::from)
       .map(ResponseEntity::ok)
       .orElse(ResponseEntity.notFound().build());
   }
 
   @PostMapping
-  public JobApplication createApplication(@Valid @RequestBody JobApplicationRequest request) {
-    return jobApplicationService.create(request);
+  public JobApplicationResponse createApplication(@Valid @RequestBody JobApplicationRequest request) {
+    JobApplication application = jobApplicationService.create(request);
+    return JobApplicationResponse.from(application);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<JobApplication> updateApplication(
+  public ResponseEntity<JobApplicationResponse> updateApplication(
     @PathVariable Long id,
     @Valid @RequestBody JobApplicationRequest request
   ) {
     return jobApplicationService.update(id, request)
+      .map(JobApplicationResponse::from)
       .map(ResponseEntity::ok)
       .orElse(ResponseEntity.notFound().build());
   }
