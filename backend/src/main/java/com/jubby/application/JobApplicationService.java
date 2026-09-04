@@ -1,6 +1,7 @@
 package com.jubby.application;
 
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,8 +15,21 @@ public class JobApplicationService {
     this.jobApplicationRepository = jobApplicationRepository;
   }
 
-  public List<JobApplication> findAll() {
-    return jobApplicationRepository.findAll();
+  public List<JobApplication> findAll(String search, ApplicationStatus status, String sortBy, String direction) {
+    Sort sort = buildSort(sortBy, direction);
+
+    if (search != null && !search.isBlank()) {
+      return jobApplicationRepository.findByCompanyContainingIgnoreCaseOrPositionContainingIgnoreCase(
+        search,
+        search
+      );
+    }
+
+    if (status != null) {
+      return jobApplicationRepository.findByStatus(status);
+    }
+
+    return jobApplicationRepository.findAll(sort);
   }
 
   public Optional<JobApplication> findById(Long id) {
@@ -59,5 +73,21 @@ public class JobApplicationService {
 
     jobApplicationRepository.deleteById(id);
     return true;
+  }
+
+  private Sort buildSort(String sortBy, String direction) {
+    String safeSortBy = switch (sortBy == null ? "createdAt" : sortBy) {
+      case "applicationDate" -> "applicationDate";
+      case "company" -> "company";
+      case "position" -> "position";
+      case "status" -> "status";
+      default -> "createdAt";
+    };
+
+    Sort.Direction safeDirection = "asc".equalsIgnoreCase(direction)
+      ? Sort.Direction.ASC
+      : Sort.Direction.DESC;
+
+    return Sort.by(safeDirection, safeSortBy);
   }
 }
