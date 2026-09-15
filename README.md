@@ -10,3 +10,13 @@ Jubby is a full-stack job search and application management platform.
 - API: REST
 - Authentication: Spring Security, JWT
 - DevOps: Docker, GitHub, Actions
+
+## Project Structure
+
+```text
+jubby/
+├── backend/
+├── frontend/
+├── docs/
+└── README.md
+```
