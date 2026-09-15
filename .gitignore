@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Java / Maven
+target/
+*.class
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+
+# Frontend dependencies
+node_modules/
+dist/
+build/
