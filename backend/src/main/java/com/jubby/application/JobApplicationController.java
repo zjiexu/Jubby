@@ -3,6 +3,8 @@ package com.jubby.application;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -28,14 +30,14 @@ public class JobApplicationController {
   }
 
   @PostMapping
-  public JobApplication createApplication(@RequestBody JobApplication application) {
+  public JobApplication createApplication(@Valid @RequestBody JobApplication application) {
     return jobApplicationService.create(application);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<JobApplication> updateApplication(
     @PathVariable Long id,
-    @RequestBody JobApplication updatedApplication
+    @Valid @RequestBody JobApplication updatedApplication
   ) {
     return jobApplicationService.update(id, updatedApplication)
       .map(ResponseEntity::ok)
