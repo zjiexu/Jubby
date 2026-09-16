@@ -1,14 +1,19 @@
 package com.jubby.application;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.URL;
+import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "job_applications")
 public class JobApplication {
   
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @NotBlank(message = "Company is required")
@@ -24,11 +29,16 @@ public class JobApplication {
   private String jobUrl;
 
   @NotNull(message = "Status is required")
+  @Enumerated(EnumType.STRING)
   private ApplicationStatus status;
   
   private LocalDate applicationDate;
   private String notes;
+
+  @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
+
+  @Column(nullable = false)
   private LocalDateTime updatedAt;
 
   public JobApplication() {
@@ -58,6 +68,18 @@ public class JobApplication {
     this.notes = notes;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+  }
+
+  @PrePersist
+  public void onCreate() {
+    LocalDateTime now = LocalDateTime.now();
+    this.createdAt = now;
+    this.updatedAt = now;
+  }
+
+  @PreUpdate
+  public void onUpdate() {
+    this.updatedAt = LocalDateTime.now();
   }
 
   public Long getId() {
