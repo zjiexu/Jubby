@@ -38,4 +38,24 @@ public class JobApplicationService {
     applications.add(application);
     return application;
   }
+
+  public Optional<JobApplication> update(Long id, JobApplication updatedApplication) {
+    return findById(id).map(existingApplication -> {
+      existingApplication.setCompany(updatedApplication.getCompany());
+      existingApplication.setPosition(updatedApplication.getPosition());
+      existingApplication.setLocation(updatedApplication.getLocation());
+      existingApplication.setSalary(updatedApplication.getSalary());
+      existingApplication.setJobUrl(updatedApplication.getJobUrl());
+      existingApplication.setStatus(updatedApplication.getStatus());
+      existingApplication.setApplicationDate(updatedApplication.getApplicationDate());
+      existingApplication.setNotes(updatedApplication.getNotes());
+      existingApplication.setUpdatedAt(LocalDateTime.now());
+
+      return existingApplication;
+    });
+  }
+
+  public boolean deleteById(Long id) {
+    return applications.removeIf(application -> application.getId().equals(id));
+  }
 }
