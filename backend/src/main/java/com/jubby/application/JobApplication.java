@@ -1,12 +1,19 @@
 package com.jubby.application;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.URL;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 @Table(name = "job_applications")
@@ -16,19 +23,12 @@ public class JobApplication {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotBlank(message = "Company is required")
   private String company;
-
-  @NotBlank(message = "Position is required")
   private String position;
-
   private String location;
   private String salary;
-
-  @URL(message = "Job URL must be a valid URL")
   private String jobUrl;
 
-  @NotNull(message = "Status is required")
   @Enumerated(EnumType.STRING)
   private ApplicationStatus status;
   
@@ -41,45 +41,20 @@ public class JobApplication {
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 
-  public JobApplication() {
-  }
-
-  public JobApplication(
-    Long id,
-    String company,
-    String position,
-    String location,
-    String salary,
-    String jobUrl,
-    ApplicationStatus status,
-    LocalDate applicationDate,
-    String notes,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt
-  ) {
-    this.id = id;
-    this.company = company;
-    this.position = position;
-    this.location = location;
-    this.salary = salary;
-    this.jobUrl = jobUrl;
-    this.status = status;
-    this.applicationDate = applicationDate;
-    this.notes = notes;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+  protected JobApplication() {
+    // Required by JPA.
   }
 
   @PrePersist
   public void onCreate() {
-    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
     this.createdAt = now;
     this.updatedAt = now;
   }
 
   @PreUpdate
   public void onUpdate() {
-    this.updatedAt = LocalDateTime.now();
+    this.updatedAt = LocalDateTime.now(ZoneOffset.UTC);
   }
 
   public Long getId() {
@@ -87,7 +62,7 @@ public class JobApplication {
   }
 
   public void setId(Long id) {
-    this. id = id;
+    this.id = id;
   }
 
   public String getCompany() {
