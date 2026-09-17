@@ -18,8 +18,13 @@ public class JobApplicationController {
   }
   
   @GetMapping
-  public List<JobApplicationResponse> getAllApplications() {
-    return jobApplicationService.findAll()
+  public List<JobApplicationResponse> getAllApplications(
+    @RequestParam(required = false) String search,
+    @RequestParam(required = false) ApplicationStatus status,
+    @RequestParam(required = false) String sortBy,
+    @RequestParam(required = false) String direction
+  ) {
+    return jobApplicationService.findAll(search, status, sortBy, direction)
       .stream()
       .map(JobApplicationResponse::from)
       .toList();
