@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
-import { getJobApplications } from "../api/jobApplicationsApi";
-import type { JobApplication } from "../types/jobApplication";
+import {
+  createJobApplication,
+  getJobApplications,
+} from "../api/jobApplicationsApi";
+import JobApplicationForm from "../components/JobApplicationForm";
+import type { JobApplication, JobApplicationRequest } from "../types/jobApplication";
 
 function ApplicationsPage() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
@@ -8,17 +12,27 @@ function ApplicationsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getJobApplications()
-      .then((data) => {
-        setApplications(data);
-      })
-      .catch(() => {
-        setError("Unable to load job applications");
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    loadApplications();
   }, []);
+
+  async function loadApplications() {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await getJobApplications();
+      setApplications(data);
+    } catch {
+      setError("Unable to load job applications");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleCreateApplication(request: JobApplicationRequest) {
+    await createJobApplication(request);
+    await loadApplications();
+  }
 
   if (isLoading) {
     return <p>Loading applications...</p>
@@ -28,23 +42,19 @@ function ApplicationsPage() {
     return <p>{error}</p>
   }
 
+  <JobApplicationForm onSubmit={handleCreateApplication} />
+
   return (
     <section>
+      <JobApplicationForm onSubmit={handleCreateApplication} />
+
       <h2>Applications</h2>
 
       {applications.length === 0 ? (
         <p>No job applications yet.</p>
       ) : (
         <ul>
-          {applications.map((application) => (
-            <li key={application.id}>
-              <strong>{application.position}</strong> at {application.company}
-              <br />
-              <span>Status: {application.status}</span>
-              <br />
-              {application.location && <span>Location: {application.location}</span>}
-            </li>
-          ))}
+          ...
         </ul>
       )}
     </section>
